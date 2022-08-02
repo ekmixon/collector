@@ -69,17 +69,17 @@ class HookManager(object):
 
         :param script: The script path
         """
-        logging.debug('Copying %s to the remote server...' % script)
+        logging.debug(f'Copying {script} to the remote server...')
 
         local_path = os.path.join(self.conf.config_path, script)
-        remote_path = '/home/%s' % self.conf.get(MAIN_CFG, USER_CFG)
+        remote_path = f'/home/{self.conf.get(MAIN_CFG, USER_CFG)}'
         put(local_path, remote_path, mirror_local_mode=True)
 
     def _run_remote_script(self, configured_hook_name, script, params):
         """
         Run a script remotely
         """
-        command = '/home/%s/%s' % (self.conf.get(MAIN_CFG, USER_CFG), script)
+        command = f'/home/{self.conf.get(MAIN_CFG, USER_CFG)}/{script}'
         timeout = self._get_command_timeout(params)
         warn_only = params.get('warn_only', False)
 
@@ -91,8 +91,8 @@ class HookManager(object):
             else:
                 if result.failed:
                     msg = 'The remote command returned exit code != 0,'\
-                          ' execution will continue but results may be'\
-                          ' incomplete/broken.'
+                              ' execution will continue but results may be'\
+                              ' incomplete/broken.'
                     logging.warn(msg)
 
     def _get_command_timeout(self, params):

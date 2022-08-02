@@ -27,24 +27,24 @@ def collect(conf, performance_results, output, version, instance):
     output_file = OUTPUT_FILE_FMT % (int(time.time()), version)
 
     logging.info('Output statistics:')
-    sudo('ls -lah %s' % performance_results)
-    sudo('du -sh %s' % performance_results)
+    sudo(f'ls -lah {performance_results}')
+    sudo(f'du -sh {performance_results}')
 
     logging.info('Compressing output...')
     # performance_results looks like /tmp/collector/w3af-*
     path, file_glob = os.path.split(performance_results)
     with cd(path):
-        sudo('tar -cpvf /tmp/%s %s' % (output_file, file_glob))
+        sudo(f'tar -cpvf /tmp/{output_file} {file_glob}')
 
     # Append config information to tar
-    sudo('tar -C /tmp/ -rpvf /tmp/%s config' % output_file)
+    sudo(f'tar -C /tmp/ -rpvf /tmp/{output_file} config')
 
     # Compress tar file
-    sudo('bzip2 -9 /tmp/%s' % output_file)
-    output_file = '%s.bz2' % output_file
+    sudo(f'bzip2 -9 /tmp/{output_file}')
+    output_file = f'{output_file}.bz2'
 
-    remote_path = '/tmp/%s' % output_file
-    sudo('ls -lah %s' % remote_path)
+    remote_path = f'/tmp/{output_file}'
+    sudo(f'ls -lah {remote_path}')
 
     # Uploading to S3
     try:
@@ -91,7 +91,7 @@ def collect(conf, performance_results, output, version, instance):
 
     while True:
         i += 1
-        potential_output_path = os.path.join(local_path, '%s' % i)
+        potential_output_path = os.path.join(local_path, f'{i}')
 
         if not os.path.exists(potential_output_path):
             os.makedirs(potential_output_path)
@@ -104,7 +104,7 @@ def collect(conf, performance_results, output, version, instance):
 
     logging.debug('Decompress downloaded data...')
     with lcd(local_path):
-        local('tar -jxpvf %s' % output_file)
+        local(f'tar -jxpvf {output_file}')
 
     os.unlink(local_file_path)
 

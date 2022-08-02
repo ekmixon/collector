@@ -115,7 +115,7 @@ class Config(object):
             try:
                 hook_info = self.get(hook_name)
             except KeyError:
-                logging.debug('No %s hook provided' % hook_name)
+                logging.debug(f'No {hook_name} hook provided')
                 continue
 
             # At this point the hook_info looks like this:
@@ -123,19 +123,18 @@ class Config(object):
             #   ['send_info_to_s3.py', 'remove_tmp.py']
             #   [{'collect_cloudwatch_info.py': ['local']}, 'some_other_command.py']
             for script_info in hook_info:
+                params = {}
                 if isinstance(script_info, basestring):
                     script = script_info
-                    params = {}
                 else:
                     script = script_info.keys()[0]
-                    params = {}
                     for param_dict in script_info[script]:
-                        params.update(param_dict)
+                        params |= param_dict
 
                 self._append_hook(hook_name, script, params)
 
     def _append_hook(self, hook_name, script, params):
-        logging.debug('Adding hook %s: %s %s' % (hook_name, script, params))
+        logging.debug(f'Adding hook {hook_name}: {script} {params}')
 
         self.hooks.append((hook_name, script, params))
 
@@ -143,9 +142,8 @@ class Config(object):
         """
         :return: A string representing the error of a missing key
         """
-        fmt = '%s is a required section of the configuration file.'
         data = '/'.join(req_keys)
-        return fmt % data
+        return f'{data} is a required section of the configuration file.'
 
     def get(self, *args):
         """
@@ -156,8 +154,8 @@ class Config(object):
     def _internal_get(self, config, path):
         if not len(path):
             raise ValueError('Invalid call to get()')
-        elif not path[0] in config:
-            raise KeyError('%s not found in %s' % (path[0], config))
+        elif path[0] not in config:
+            raise KeyError(f'{path[0]} not found in {config}')
         elif len(path) == 1:
             return config[path[0]]
         else:

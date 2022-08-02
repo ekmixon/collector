@@ -191,11 +191,11 @@ def existing_directory(value):
                                          ' exist.')
 
     if not os.path.isdir(value):
-        raise argparse.ArgumentTypeError('%s is not a directory' % value)
+        raise argparse.ArgumentTypeError(f'{value} is not a directory')
 
     config_file = os.path.join(value, 'config.yml')
     if not os.path.exists(config_file):
-        raise argparse.ArgumentTypeError('%s does not exist' % config_file)
+        raise argparse.ArgumentTypeError(f'{config_file} does not exist')
 
     return config_file
 
@@ -217,5 +217,4 @@ def parse_args():
     parser.add_argument('--debug', action='store_true', help='Print debugging information')
     parser.add_argument('--shell-on-fail', action='store_true', help='Open an interactive shell when a script fails')
     parser.add_argument('--shell-before-terminate', action='store_true', help='Open an interactive shell before EC2 termination')
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()

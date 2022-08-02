@@ -12,30 +12,28 @@ def create_keypair(key_name):
     """
     if not keypair_exists(key_name):
         conn = EC2Connection()
-        
-        logging.info('Creating keypair: %s' % key_name)
+
+        logging.info(f'Creating keypair: {key_name}')
         # Create an SSH key to use when logging into instances.
         key = conn.create_key_pair(key_name)
-        
+
         # AWS will store the public key but the private key is
         # generated and returned and needs to be stored locally.
-        key_file = '%s.pem' % key_name
+        key_file = f'{key_name}.pem'
         if os.path.exists(key_file):
             os.unlink(key_file)
         key.save('.')
-        
+
         for _ in xrange(20):
             if keypair_exists(key_name):
                 break
-            
+
             logging.debug('Waiting for keypair to be available...')
             time.sleep(2)
         else:
-            raise RuntimeError('Failed to create keypair %s' % key_name)
-        
-        return key_name
-    else:
-        return key_name
+            raise RuntimeError(f'Failed to create keypair {key_name}')
+
+    return key_name
 
         
 def keypair_exists(key_name):

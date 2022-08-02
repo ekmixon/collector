@@ -63,7 +63,7 @@ def create_security_group(sg_name):
 def wait_ssh_ready(host, tries=40, delay=3, port=22):
     # Wait until the SSH is actually up
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    print('Waiting for SSH at %s to be ready to connect' % host, end='')
+    print(f'Waiting for SSH at {host} to be ready to connect', end='')
     sys.stdout.flush()
 
     for _ in xrange(tries):
@@ -85,7 +85,6 @@ def wait_ssh_ready(host, tries=40, delay=3, port=22):
             print() # A new line
             logging.info('SSH is ready to connect')
             return True
-    else:
-        waited = tries * delay
-        logging.error('SSH is not available after %s seconds.' % waited)
-        return False
+    waited = tries * delay
+    logging.error(f'SSH is not available after {waited} seconds.')
+    return False
